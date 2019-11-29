@@ -29,80 +29,23 @@
     </head>
     <body>
         <%@include file="Validar_Administrador.jsp" %>
+        <%@include file="Barra_Navegacion.jsp" %>
         <%
             Administrador_Atributos admi = (Administrador_Atributos)session.getAttribute("Administrador");
             if(admi!=null){
             String nombre = admi.getNombre();
         %>
 
-
+        <div style="margin-left:15%;padding:1px 16px;height:1000px;"> <!--buena ubicacion-->
         <h1>Menu Administrador</h1>
         <h1><%=nombre%></h1>
         <%
             };
         %>
-            
-        <button id="buttonSalir">Cerrar Sesion...</button>
         
-        <table  style="border: solid black 2px">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>DNI</th>
-                            <th>Nombres</th>
-                            <th>Apellidos</th>
-                            <th>Direccion</th>
-                            <th>Estado_Civil</th>
-                            <th>Sexo</th>
-                            <th>Estado_Votante</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tblVotantes">
-                       
-                    </tbody>
-                </table>
-        
+    </div>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
-        
         <script>
-            //AJAX con JSON
-            $( document ).ready(function() {
-              
-                $.ajax({
-                            url: "Votantes_Servlet",
-                            type: 'POST',
-                            dataType: 'json',
-                            data: {
-                                accion: "listar"
-                            },
-                            success: function (response) {
-                                $('#tblVotantes').html("");
-                                if(response.length > 0 ){
-                                    response.forEach(function(element) {                                    
-                                        $('#tblVotantes').append("<tr>"+
-                                            "<td>"+element.id+"</td>"+
-                                            "<td>"+element.dni+"</td>"+
-                                            "<td>"+element.nombre+"</td>"+
-                                            "<td>"+element.apellido+"</td>"+
-                                            "<td>"+element.dirección+"</td>"+
-                                            "<td>"+element.estado_civil+"</td>"+
-                                            "<td>"+element.sexo+"</td>"+
-                                            "<td>"+element.estado_votante+"</td>"+
-                                            "</tr>");
-                                    });
-                                    
-                                } else {
-                                    $('#tblVotantes').append("<tr><td colspan='11'> NO HAY RESULTADOS</td></tr>");
-                                }
-
-                            },
-                            error: function (data, status, er) {
-                                $('#tblVotantes').html("Error en base de datos ");
-                            }
-                });
-            });
-            
-            
             $("#buttonSalir").click(function() {
                 
                 $.ajax({
@@ -123,9 +66,6 @@
                         }
                 });
             });
-
         </script>
-
-
     </body>
 </html>
