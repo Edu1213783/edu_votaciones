@@ -6,8 +6,10 @@
 package Controlador;
 
 import Entidad.Votantes_Atributos;
+import Modelo.Partido_BD;
 import Modelo.Votante_BD;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -39,11 +41,11 @@ public class Votantes_Servlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String accion = request.getParameter("accion");
             System.out.println("prueba");
-//            if(accion.equals("login")){
-//                Login(request, response); 
-//            }if(accion.equals("logout")){
-//                Logout(request, response); 
-            if(accion.equals("listar")){
+           if(accion.equals("login")){
+                Login(request, response); 
+            }if(accion.equals("votar")){
+                Votar(request, response); 
+            }if(accion.equals("listar")){
                 Listar(request, response); 
             }
         
@@ -93,8 +95,6 @@ public class Votantes_Servlet extends HttpServlet {
     {
          PrintWriter writer = response.getWriter();
         String jsonResult = "";
-        
-        System.out.print("asasas");
         try{    
             ArrayList<Votantes_Atributos> pers = Votante_BD.ListarVotantes();
             
@@ -107,6 +107,65 @@ public class Votantes_Servlet extends HttpServlet {
         writer.print(jsonResult);
         writer.flush();
         writer.close();
+    }
+
+    private void Login(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter writer = response.getWriter();
+        
+        String data_json = request.getParameter("text_json").trim();
+        JsonObject jobj = new Gson().fromJson(data_json, JsonObject.class);
+        String dni = jobj.get("dni").getAsString();
+        String jsonResult = "";
+        
+        
+        try{    
+            Votantes_Atributos votante = Votante_BD.BuscarVotantes(dni);
+            String respuesta=" ";
+            if(dni.equals(votante.getDni())){
+                if("no".equals(votante.getEstado_votante())){
+                    request.getSession().setAttribute("Votante", votante); 
+                     respuesta="Pass";
+                    
+                    
+                }else{
+                   respuesta="No Voto";
+                   
+                }
+            }else{
+                respuesta="Error";
+                    
+                    
+            }
+            Gson g = new Gson();
+                    jsonResult = g.toJson(respuesta);
+            
+        }catch(Exception ex){writer.println(ex);}
+        writer.print(jsonResult);
+        writer.flush();
+        writer.close();
+    }
+
+    private void Votar(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter writer = response.getWriter();
+        
+        String data_json = request.getParameter("text_json").trim();
+        JsonObject jobj = new Gson().fromJson(data_json, JsonObject.class);
+        String id = jobj.get("id").getAsString();
+        String dni = jobj.get("dni").getAsString();
+        String jsonResult = "";
+        
+        
+        try{    
+            String respuesta= Partido_BD.VotarPartido(id,dni);
+            System.out.print("llego ;"+ respuesta);
+            Gson g = new Gson();
+                    jsonResult = g.toJson(respuesta);
+            
+        }catch(Exception ex){writer.println(ex);}
+        writer.print(jsonResult);
+        writer.flush();
+        writer.close();
+    
     }
 
 }

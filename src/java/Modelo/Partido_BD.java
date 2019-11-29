@@ -45,4 +45,59 @@ public class Partido_BD {
         }
         return lista;
     }
+    public static String VotarPartido(String id, String dni) {
+        Partidos_Atributos partido = new Partidos_Atributos();
+        Connection cn;
+        Conexion con = new Conexion();
+        cn=con.conectar();
+        
+        String respuesta="";
+        
+        try{
+            PreparedStatement pstm = cn.prepareStatement("SELECT * FROM  partidos WHERE id= ? ");
+            pstm.setString(1, id);
+            
+            ResultSet rs = pstm.executeQuery();
+            if(rs.next()){
+                
+                    partido.setContador_votos(rs.getString("contador_votos"));
+                    
+            }
+            //aumentando el numero de votos
+            int contador = Integer.parseInt(partido.getContador_votos())+1;
+            partido.setContador_votos(contador+"");
+            
+            pstm = cn.prepareStatement("UPDATE partidos SET contador_votos = ?\n" +
+                                            "WHERE id = ?;");
+            pstm.setString(1, partido.getContador_votos());
+            pstm.setString(2, id);
+            
+            
+            int i = pstm.executeUpdate();
+            
+            if(i==1)    {
+                pstm = cn.prepareStatement("UPDATE votantes SET estado_votante = 'si' \n" +
+                                            "WHERE dni = ?;");
+                pstm.setString(1, dni);
+            
+            
+                int a = pstm.executeUpdate();
+                
+                if(a==1)    {
+                    respuesta="Correcto";
+                }else{
+                    respuesta="ErrorEstado";
+                }
+                
+            }
+            else
+                respuesta="ErrorVoto";
+                
+            
+        }catch(Exception e){ 
+            System.out.println(e);
+        }
+        
+        return respuesta;
+    }
 }

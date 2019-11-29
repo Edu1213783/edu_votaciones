@@ -27,6 +27,7 @@
         <br>
         <button id="buttonIngresoVotar" > Votar </button>
         
+        
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
         
         <script>   
@@ -63,25 +64,25 @@
             //AJAX con JSON
             $("#buttonIngresoVotar" ).click(function() {
                 var user = new Object();
-                user.userdni = $('#dni').val();
+                user.dni = $('#dni').val();
                 console.log(user);
                 $.ajax({
-                        url: "Servlet_Persona",
+                        url: "Votantes_Servlet",
                         type: 'POST',   
                         dataType: 'json',
                         data: {
-                            accion: $("#accion").val(),
+                            accion: 'login',
                             text_json: JSON.stringify(user)
                         },
                           
                         success : function(response) {
                                 console.log(response);
-                                if(response == "noPass"){
-                                    $('#ajaxResponseDNI').html("Este DNI no existe");
-                                }else if(response == "noUsu"){
-                                    $('#ajaxResponseDNI').html("Usuario equivocado");
+                                if(response == "Error"){
+                                    $('#ajaxResponseUsuario').html("DNI Equivocado...");
+                                }else if(response == "No Voto"){
+                                    $('#ajaxResponseUsuario').html("Usted ya Voto...");
                                 }else{
-                                    window.location.href = "votar.jsp";
+                                    window.location.href = "Elegir_Partido.jsp";
                                 }
                         },
                         error:function(data,status,er) {

@@ -50,5 +50,36 @@ public class Votante_BD
         }
         return lista;
     }
+
+    public static Votantes_Atributos BuscarVotantes(String dni) {
+        Votantes_Atributos votante = new Votantes_Atributos();
+        Connection cn;
+        Conexion con = new Conexion();
+        cn=con.conectar();
+        
+        try{
+            PreparedStatement pstm = cn.prepareStatement("SELECT * FROM  votantes WHERE dni= ? ");
+            pstm.setString(1, dni);
+            
+            ResultSet rs = pstm.executeQuery();
+            if(rs.next()){
+                
+                    votante.setId(rs.getInt("id"));
+                    votante.setNombre(rs.getString("nombre"));
+                    votante.setApellido(rs.getString("apellido"));
+                    votante.setDni(rs.getString("dni"));
+                    votante.setDirección(rs.getString("direccion"));
+                    votante.setSexo(rs.getString("sexo"));
+                    votante.setEstado_civil(rs.getString("estado_civil"));
+                    votante.setEstado_votante(rs.getString("estado_votante"));
+                    
+                    
+                       
+            }
+        }catch(Exception e){ 
+            System.out.println(e);
+        }
+        return votante;
+    }
     
 }
